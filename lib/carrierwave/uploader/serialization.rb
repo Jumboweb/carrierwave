@@ -2,6 +2,7 @@
 
 require "json"
 require "active_support/core_ext/hash"
+require 'base64'
 
 module CarrierWave
   module Uploader
@@ -9,7 +10,7 @@ module CarrierWave
       extend ActiveSupport::Concern
 
       def serializable_hash(options = nil)
-        {"url" => url}.merge Hash[versions.map { |name, version| [name, { "url" => version.url }] }]
+        {"url" => url}.merge Hash[versions.map { |name, version| [name, { "url" => version.url, "base64" => Base64.encode64(File.open(version.path).read) }] }]
       end
 
       def as_json(options=nil)
